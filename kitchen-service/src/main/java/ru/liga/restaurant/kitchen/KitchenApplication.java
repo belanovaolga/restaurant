@@ -1,11 +1,12 @@
-package ru.liga;
+package ru.liga.restaurant.kitchen;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Main {
+public class KitchenApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(KitchenApplication.class, args);
     }
+
 }

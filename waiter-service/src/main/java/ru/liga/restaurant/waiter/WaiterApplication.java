@@ -1,11 +1,11 @@
-package ru.liga;
+package ru.liga.restaurant.waiter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Main {
+public class WaiterApplication {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(WaiterApplication.class, args);
     }
 }

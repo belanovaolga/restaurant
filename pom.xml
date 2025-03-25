@@ -23,6 +23,7 @@
 	</developers>
 	<modules>
 		<module>waiter-service</module>
+		<module>dependency_bom</module>
 		<module>kitchen-service</module>
 	</modules>
 	<scm>
