@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "fef1e16d-9f41-4f89-b337-088494c8a3fc",
+		"name": "kitchen-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32679736"
+	},
+	"item": [
+		{
+			"name": "accept-order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 1,\r\n    \"dishes\" : [\"chiken\", \"apple pie\"],\r\n    \"waiterId\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/kitchen",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"kitchen"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-kitchen-list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/kitchen",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"kitchen"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reject-order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 1,\r\n    \"dishes\" : [\"chiken\", \"apple pie\"],\r\n    \"waiterId\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/kitchen/reject",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"kitchen",
+						"reject"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ready-order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/kitchen/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"kitchen",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

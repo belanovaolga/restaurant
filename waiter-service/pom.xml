@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ru.liga</groupId>
-        <artifactId>restaurant</artifactId>
+        <artifactId>dependency_bom</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../dependency_bom/pom.xml</relativePath>
     </parent>
 
     <artifactId>waiter-service</artifactId>

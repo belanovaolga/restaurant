@@ -1,0 +1,98 @@
+{
+	"info": {
+		"_postman_id": "e8fc03ba-daf9-4a80-9ab9-45ea6d023c6f",
+		"name": "waiter-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32679736"
+	},
+	"item": [
+		{
+			"name": "get-order-list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8070/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8070",
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8070/order/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8070",
+					"path": [
+						"order",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create-order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\" : 1,\r\n    \"dishes\" : [\"chiken\", \"apple pie\"],\r\n    \"sum\" : 2679.99,\r\n    \"waiterId\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8070/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8070",
+					"path": [
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8070/order/status/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8070",
+					"path": [
+						"order",
+						"status",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
