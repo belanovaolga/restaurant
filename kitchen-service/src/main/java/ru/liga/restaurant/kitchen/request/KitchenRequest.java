@@ -1,15 +1,12 @@
-package ru.liga.restaurant.kitchen.dto;
+package ru.liga.restaurant.kitchen.request;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@Builder
-public class KitchenDTO {
+public class KitchenRequest {
     private Long id;
     private List<String> dishes;
     private Long waiterId;
-    private Status status;
 }

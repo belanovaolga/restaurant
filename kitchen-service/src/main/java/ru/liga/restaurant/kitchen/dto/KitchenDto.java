@@ -1,13 +1,15 @@
-package ru.liga.restaurant.waiter.dao;
+package ru.liga.restaurant.kitchen.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class OrderDao {
+@Builder
+public class KitchenDto {
     private Long id;
     private List<String> dishes;
-    private Double sum;
     private Long waiterId;
+    private Status status;
 }

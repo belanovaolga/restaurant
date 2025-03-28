@@ -1,27 +1,26 @@
 package ru.liga.restaurant.kitchen.controller;
 
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
-import ru.liga.restaurant.kitchen.exception.OrderAlreadyExist;
-import ru.liga.restaurant.kitchen.exception.OrderNotFound;
-import ru.liga.restaurant.kitchen.exception.OrderNotReady;
+import ru.liga.restaurant.kitchen.exception.OrderAlreadyExistException;
+import ru.liga.restaurant.kitchen.exception.OrderNotFoundException;
+import ru.liga.restaurant.kitchen.exception.OrderNotReadyException;
 
 @RestControllerAdvice
 public class ExceptionApiHandler {
-    @ExceptionHandler(OrderAlreadyExist.class)
-    public ResponseStatusException orderAlreadyExistException(OrderAlreadyExist orderAlreadyExist) {
-        return new ResponseStatusException(HttpStatusCode.valueOf(orderAlreadyExist.getCode()), orderAlreadyExist.getMessage());
+    @ExceptionHandler(OrderAlreadyExistException.class)
+    public ResponseStatusException orderAlreadyExistException(OrderAlreadyExistException orderAlreadyExistException) {
+        return new ResponseStatusException(orderAlreadyExistException.getHttpStatus(), orderAlreadyExistException.getMessage());
     }
 
-    @ExceptionHandler(OrderNotFound.class)
-    public ResponseStatusException orderNotFoundException(OrderNotFound orderNotFound) {
-        return new ResponseStatusException(HttpStatusCode.valueOf(orderNotFound.getCode()), orderNotFound.getMessage());
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseStatusException orderNotFoundException(OrderNotFoundException orderNotFoundException) {
+        return new ResponseStatusException(orderNotFoundException.getHttpStatus(), orderNotFoundException.getMessage());
     }
 
-    @ExceptionHandler(OrderNotReady.class)
-    public ResponseStatusException orderNotReadyException(OrderNotReady orderNotReady) {
-        return new ResponseStatusException(HttpStatusCode.valueOf(orderNotReady.getCode()), orderNotReady.getMessage());
+    @ExceptionHandler(OrderNotReadyException.class)
+    public ResponseStatusException orderNotReadyException(OrderNotReadyException orderNotReadyException) {
+        return new ResponseStatusException(orderNotReadyException.getHttpStatus(), orderNotReadyException.getMessage());
     }
 }
