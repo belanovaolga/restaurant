@@ -1,11 +1,12 @@
 server:
   port: 8070
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*" #<2>
-  endpoint:
-    health:
-      show-details: always
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/waiter
+    username: postgres
+    password: 1234
+
+  liquibase:
+    change-log: classpath:/db/db.changelog.xml
