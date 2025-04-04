@@ -1,4 +1,4 @@
-package ru.liga.restaurant.waiter.dto;
+package ru.liga.restaurant.waiter.model.enums;
 
 public enum Status {
     ACCEPT,

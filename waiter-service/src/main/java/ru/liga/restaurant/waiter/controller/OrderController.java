@@ -2,8 +2,8 @@ package ru.liga.restaurant.waiter.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.liga.restaurant.waiter.dto.OrderDto;
-import ru.liga.restaurant.waiter.request.OrderRequest;
+import ru.liga.restaurant.waiter.model.request.OrderRequest;
+import ru.liga.restaurant.waiter.model.response.OrderResponse;
 import ru.liga.restaurant.waiter.service.OrderService;
 
 import java.util.List;
@@ -15,17 +15,17 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public List<OrderDto> getOrderList() {
+    public List<OrderResponse> getOrderList() {
         return orderService.getOrderList();
     }
 
     @GetMapping("/{id}")
-    public OrderDto getOrder(@PathVariable Long id) {
+    public OrderResponse getOrder(@PathVariable Long id) {
         return orderService.getOrder(id);
     }
 
     @PostMapping
-    public OrderDto createOrder(@RequestBody OrderRequest orderRequest) {
+    public OrderResponse createOrder(@RequestBody OrderRequest orderRequest) {
         return orderService.createOrder(orderRequest);
     }
 

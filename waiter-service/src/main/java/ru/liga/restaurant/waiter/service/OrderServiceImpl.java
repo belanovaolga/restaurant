@@ -3,45 +3,69 @@ package ru.liga.restaurant.waiter.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.liga.restaurant.waiter.repository.OrderRepository;
-import ru.liga.restaurant.waiter.request.OrderRequest;
-import ru.liga.restaurant.waiter.dto.OrderDto;
-import ru.liga.restaurant.waiter.dto.Status;
-import ru.liga.restaurant.waiter.exception.OrderAlreadyExistException;
-import ru.liga.restaurant.waiter.exception.OrderNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
+import ru.liga.restaurant.waiter.exception.NotFoundException;
+import ru.liga.restaurant.waiter.mapper.OrderPositionsMapper;
+import ru.liga.restaurant.waiter.mapper.WaiterOrderMapper;
+import ru.liga.restaurant.waiter.model.*;
+import ru.liga.restaurant.waiter.model.request.OrderRequest;
+import ru.liga.restaurant.waiter.model.response.OrderResponse;
+import ru.liga.restaurant.waiter.repository.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    private final OrderRepository orderRepository;
+    private final WaiterOrderRepository waiterOrderRepository;
+    private final WaiterAccountRepository waiterAccountRepository;
+    private final OrderPositionsRepository orderPositionsRepository;
+    private final MenuRepository menuRepository;
+    private final PaymentRepository paymentRepository;
+    private final WaiterOrderMapper waiterOrderMapper;
+    private final OrderPositionsMapper orderPositionsMapper;
 
     @Override
-    public List<OrderDto> getOrderList() {
-        return orderRepository.findAll();
+    public List<OrderResponse> getOrderList() {
+        List<WaiterOrder> waiterOrders = waiterOrderRepository.findAll();
+
+        return waiterOrders.stream().map(waiterOrderMapper::toOrderResponse).toList();
     }
 
     @Override
-    public OrderDto getOrder(Long id) {
-        return findById(id);
+    public OrderResponse getOrder(Long id) {
+        return waiterOrderMapper.toOrderResponse(findById(id));
     }
 
     @Override
-    public OrderDto createOrder(OrderRequest orderRequest) {
-        if (orderRepository.findById(orderRequest.getId()).isPresent()) {
-            throw OrderAlreadyExistException.builder().message("Заказ с таким идентификатором уже существует").httpStatus(HttpStatus.CONFLICT).build();
-        }
+    @Transactional
+    public OrderResponse createOrder(OrderRequest orderRequest) {
+        WaiterAccount waiterAccount = waiterAccountRepository.findById(orderRequest.getWaiterId())
+                .orElseThrow(() -> NotFoundException.builder()
+                        .message("Официант не найден")
+                        .httpStatus(HttpStatus.NOT_FOUND)
+                        .build());
+        WaiterOrder waiterOrder = waiterOrderMapper.toWaiterOrder(orderRequest, waiterAccount);
+        WaiterOrder savedOrder = waiterOrderRepository.save(waiterOrder);
 
-        OrderDto orderDto = OrderDto.builder()
-                .id(orderRequest.getId())
-                .dishes(orderRequest.getDishes())
-                .sum(orderRequest.getSum())
-                .waiterId(orderRequest.getWaiterId())
-                .status(Status.ACCEPT)
-                .build();
+        List<OrderPositions> positions = orderRequest.getPositions().stream()
+                .map(orderPositionsRequest -> {
+                    OrderPositions orderPositions = orderPositionsMapper.toOrderPositions(orderPositionsRequest, savedOrder);
+                    orderPositions.setMenuPositionId(findMenuById(orderPositionsRequest.getMenuPositionId()));
+                    return orderPositionsRepository.save(orderPositions);
+                })
+                .collect(Collectors.toList());
+        savedOrder.setPositions(positions);
 
-        return orderRepository.save(orderDto);
+        Double sum = calculateTotalSum(positions);
+        Payment payment = createPayment(savedOrder, orderRequest.getPaymentType(), sum);
+        savedOrder.setPayment(payment);
+
+        WaiterOrder finalOrder = waiterOrderRepository.save(savedOrder);
+
+        return waiterOrderMapper.toOrderResponse(finalOrder);
     }
 
     @Override
@@ -49,7 +73,30 @@ public class OrderServiceImpl implements OrderService {
         return findById(id).getStatus().toString();
     }
 
-    private OrderDto findById(Long id) {
-        return orderRepository.findById(id).orElseThrow(() -> OrderNotFoundException.builder().message("Заказ не найден").httpStatus(HttpStatus.NOT_FOUND).build());
+    private WaiterOrder findById(Long id) {
+        return waiterOrderRepository.findById(id).orElseThrow(() ->
+                NotFoundException.builder().message("Заказ не найден").httpStatus(HttpStatus.NOT_FOUND).build());
+    }
+
+    private Menu findMenuById(Long id) {
+        return menuRepository.findById(id).orElseThrow(() ->
+                NotFoundException.builder().message("Блюдо " + id + " не найдено").httpStatus(HttpStatus.NOT_FOUND).build());
+    }
+
+    private Double calculateTotalSum(List<OrderPositions> positions) {
+        return positions.stream()
+                .mapToDouble(orderPositions ->
+                        orderPositions.getMenuPositionId().getDishCost() * orderPositions.getDishNum())
+                .sum();
+    }
+
+    private Payment createPayment(WaiterOrder order, String paymentType, Double sum) {
+        Payment payment = Payment.builder()
+                .order(order)
+                .paymentType(paymentType)
+                .paymentDate(ZonedDateTime.now())
+                .paymentSum(sum)
+                .build();
+        return paymentRepository.save(payment);
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @RequiredArgsConstructor
-public class OrderNotFoundException extends RuntimeException {
+public class NotFoundException extends RuntimeException {
     private final String message;
     private final HttpStatus httpStatus;
 }
