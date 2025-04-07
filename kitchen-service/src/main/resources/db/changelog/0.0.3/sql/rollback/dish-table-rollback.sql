@@ -1,3 +1,3 @@
-DROP TABLE dish_table;
+DROP TABLE IF EXISTS dish_table;
 
 DROP SEQUENCE IF EXISTS dish_seq;

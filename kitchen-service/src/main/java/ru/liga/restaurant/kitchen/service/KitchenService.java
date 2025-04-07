@@ -1,13 +1,12 @@
 package ru.liga.restaurant.kitchen.service;
 
-import ru.liga.restaurant.kitchen.dto.KitchenDto;
-import ru.liga.restaurant.kitchen.request.KitchenRequest;
-
-import java.util.List;
+import ru.liga.restaurant.kitchen.model.request.OrderToDishRequest;
+import ru.liga.restaurant.kitchen.model.response.OrderToDishListResponse;
+import ru.liga.restaurant.kitchen.model.response.OrderToDishResponse;
 
 public interface KitchenService {
-    KitchenDto acceptOrder(KitchenRequest kitchenRequest);
-    String rejectOrder(KitchenDto kitchenDTO);
-    KitchenDto readyOrder(Long id);
-    List<KitchenDto> getKitchenList();
+    OrderToDishResponse acceptOrder(OrderToDishRequest orderToDishRequest);
+    String rejectOrder(OrderToDishRequest orderToDishRequest);
+    OrderToDishListResponse readyOrder(Long id);
+    OrderToDishListResponse getKitchenList();
 }

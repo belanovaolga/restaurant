@@ -7,3 +7,10 @@ spring:
 
   liquibase:
     change-log: classpath:/db/db.changelog.xml
+
+mybatis:
+  mapper-locations: classpath:mybatis/mappers/*.xml #Путь до маппера типа xml
+  type-aliases-package: ru.liga.restaurant.kitchen.model.entity # Путь куда генерируются сущности
+  configuration:
+    map-underscore-to-camel-case: true # Автоматический преобразует last_name -> lastName в resultMap
+  type-handlers-package: ru.liga.restaurant.kitchen.custom

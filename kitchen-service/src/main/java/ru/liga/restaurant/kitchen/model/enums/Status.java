@@ -1,4 +1,4 @@
-package ru.liga.restaurant.kitchen.dto;
+package ru.liga.restaurant.kitchen.model.enums;
 
 public enum Status {
     AWAITING,

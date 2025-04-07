@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ru.liga.restaurant.kitchen.custom.mapper.DishCustomMapper">
+
+    <insert id="insert" parameterType="ru.liga.restaurant.kitchen.model.entity.Dish" useGeneratedKeys="true" keyProperty="dishId" keyColumn="dish_id">
+        INSERT INTO kitchen.dish (balance, short_name, dish_composition)
+        VALUES (#{dish.balance}, #{dish.shortName}, #{dish.dishComposition})
+    </insert>
+
+    <select id="findById" parameterType="java.lang.Long" resultType="ru.liga.restaurant.kitchen.model.entity.Dish">
+        SELECT
+        dish_id as dishId,
+        balance,
+        short_name as shortName,
+        dish_composition as dishComposition
+        FROM kitchen.dish
+        WHERE dish_id = #{dishId}
+    </select>
+</mapper>

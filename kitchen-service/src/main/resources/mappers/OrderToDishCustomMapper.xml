@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ru.liga.restaurant.kitchen.custom.mapper.OrderToDishCustomMapper">
+
+    <resultMap id="orderToDishResultMap" type="ru.liga.restaurant.kitchen.model.entity.OrderToDish">
+        <result property="kitchenOrderId" column="kitchen_order_id"/>
+        <result property="dishId" column="dish_id"/>
+        <result property="dishesNumber" column="dishes_number"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="ru.liga.restaurant.kitchen.model.entity.OrderToDish">
+        INSERT INTO kitchen.order_to_dish (kitchen_order_id, dish_id, dishes_number)
+        VALUES (#{kitchenOrderId}, #{dishId}, #{dishesNumber})
+    </insert>
+
+    <select id="findById" parameterType="java.lang.Long" resultMap="orderToDishResultMap">
+        SELECT kitchen_order_id, dish_id, dishes_number
+        FROM kitchen.order_to_dish
+        WHERE kitchen_order_id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="orderToDishResultMap">
+        SELECT kitchen_order_id, dish_id, dishes_number
+        FROM kitchen.order_to_dish
+    </select>
+
+</mapper>

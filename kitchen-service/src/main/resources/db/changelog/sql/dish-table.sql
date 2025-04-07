@@ -1,8 +1,0 @@
-CREATE SEQUENCE IF NOT EXISTS dish_seq start 1 INCREMENT BY 1;
-
-CREATE TABLE IF NOT EXISTS kitchen.dish(
-    dish_id BIGINT DEFAULT NEXTVAL('dish_seq') NOT NULL PRIMARY KEY,
-    balance BIGINT NOT NULL,
-    short_name CHARACTER VARYING NOT NULL,
-    dish_composition CHARACTER VARYING NOT NULL
-);

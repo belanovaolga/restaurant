@@ -5,10 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="2024-03-30 20:20:00" author="olya">
-        <sqlFile path="sql/waiter-account-table.sql"
+        <sqlFile path="sql/create_tables.sql"
                  relativeToChangelogFile="true"/>
         <rollback>
-            <sqlFile path="sql/rollback/waiter-account-table-rollback.sql"
+            <sqlFile path="sql/rollback/tables_rollback.sql"
                      relativeToChangelogFile="true"/>
         </rollback>
     </changeSet>

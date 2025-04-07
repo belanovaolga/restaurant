@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="2024-03-30 20:13:00" author="olya">
-        <sqlFile path="sql/kitchen-order-table.sql"
+        <sqlFile path="sql/create_table_kitchen_order.sql"
                  relativeToChangelogFile="true"/>
         <rollback>
             <sqlFile path="sql/rollback/kitchen-order-table-rollback.sql"
@@ -14,7 +14,7 @@
     </changeSet>
 
     <changeSet id="2024-03-30 20:14:00" author="olya">
-        <sqlFile path="sql/dish-table.sql"
+        <sqlFile path="sql/create_table_dish.sql"
                  relativeToChangelogFile="true"/>
         <rollback>
             <sqlFile path="sql/rollback/dish-table-rollback.sql"
@@ -23,7 +23,7 @@
     </changeSet>
 
     <changeSet id="2024-03-30 20:15:00" author="olya">
-        <sqlFile path="sql/order-to-dish-table.sql"
+        <sqlFile path="sql/create_table_order_to_dish.sql"
                  relativeToChangelogFile="true"/>
         <rollback>
             <sqlFile path="sql/rollback/order-to-dish-table-rollback.sql"

@@ -1,0 +1,1 @@
+drop table IF EXISTS order_to_dish;
