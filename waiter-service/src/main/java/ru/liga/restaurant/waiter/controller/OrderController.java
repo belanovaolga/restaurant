@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.restaurant.waiter.model.request.OrderRequest;
 import ru.liga.restaurant.waiter.model.response.OrderResponse;
+import ru.liga.restaurant.waiter.model.response.OrderResponseList;
 import ru.liga.restaurant.waiter.service.OrderService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/order")
@@ -15,7 +14,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public List<OrderResponse> getOrderList() {
+    public OrderResponseList getOrderList() {
         return orderService.getOrderList();
     }
 

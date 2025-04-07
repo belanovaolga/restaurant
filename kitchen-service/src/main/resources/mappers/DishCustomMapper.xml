@@ -16,4 +16,14 @@
         FROM kitchen.dish
         WHERE dish_id = #{dishId}
     </select>
+
+    <update id="update" parameterType="ru.liga.restaurant.kitchen.model.entity.Dish">
+        UPDATE kitchen.dish
+        SET
+        balance = #{balance},
+        short_name = #{shortName},
+        dish_composition = #{dishComposition}
+        WHERE
+        dish_id = #{dishId}
+    </update>
 </mapper>

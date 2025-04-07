@@ -10,6 +10,7 @@ import ru.liga.restaurant.waiter.mapper.WaiterOrderMapper;
 import ru.liga.restaurant.waiter.model.*;
 import ru.liga.restaurant.waiter.model.request.OrderRequest;
 import ru.liga.restaurant.waiter.model.response.OrderResponse;
+import ru.liga.restaurant.waiter.model.response.OrderResponseList;
 import ru.liga.restaurant.waiter.repository.*;
 
 import java.time.ZonedDateTime;
@@ -28,10 +29,11 @@ public class OrderServiceImpl implements OrderService {
     private final OrderPositionsMapper orderPositionsMapper;
 
     @Override
-    public List<OrderResponse> getOrderList() {
+    public OrderResponseList getOrderList() {
         List<WaiterOrder> waiterOrders = waiterOrderRepository.findAll();
+        List<OrderResponse> orderResponseList = waiterOrders.stream().map(waiterOrderMapper::toOrderResponse).toList();
 
-        return waiterOrders.stream().map(waiterOrderMapper::toOrderResponse).toList();
+        return OrderResponseList.builder().orderResponseList(orderResponseList).build();
     }
 
     @Override

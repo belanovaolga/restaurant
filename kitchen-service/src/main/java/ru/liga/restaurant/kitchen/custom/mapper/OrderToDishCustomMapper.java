@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface OrderToDishCustomMapper {
     void insert(OrderToDish orderToDish);
+
     List<OrderToDish> findById(Long id);
+
     List<OrderToDish> findAll();
 }

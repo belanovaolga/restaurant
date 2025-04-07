@@ -6,11 +6,14 @@ import org.springframework.stereotype.Repository;
 import ru.liga.restaurant.kitchen.model.entity.KitchenOrder;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 @Repository
 public interface KitchenOrderCustomMapper {
-    int insert(@Param("order")KitchenOrder kitchenOrder);
+    int insert(@Param("order") KitchenOrder kitchenOrder);
+
     List<KitchenOrder> findAll();
-    KitchenOrder findById(Long id);
+
+    Optional<KitchenOrder> findById(Long id);
 }

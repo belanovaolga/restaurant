@@ -2,11 +2,10 @@ package ru.liga.restaurant.waiter.service;
 
 import ru.liga.restaurant.waiter.model.request.OrderRequest;
 import ru.liga.restaurant.waiter.model.response.OrderResponse;
-
-import java.util.List;
+import ru.liga.restaurant.waiter.model.response.OrderResponseList;
 
 public interface OrderService {
-    List<OrderResponse> getOrderList();
+    OrderResponseList getOrderList();
 
     OrderResponse getOrder(Long id);
 
