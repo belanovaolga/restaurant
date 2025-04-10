@@ -1,6 +1,6 @@
 package ru.liga.restaurant.kitchen.model.enums;
 
-public enum Status {
+public enum KitchenStatus {
     AWAITING,
     AT_WORK,
     READY

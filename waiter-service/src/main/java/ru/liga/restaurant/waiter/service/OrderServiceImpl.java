@@ -4,11 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.liga.restaurant.waiter.client.KitchenClient;
 import ru.liga.restaurant.waiter.exception.NotFoundException;
 import ru.liga.restaurant.waiter.mapper.OrderPositionsMapper;
 import ru.liga.restaurant.waiter.mapper.WaiterOrderMapper;
 import ru.liga.restaurant.waiter.model.*;
+import ru.liga.restaurant.waiter.model.enums.WaiterStatus;
+import ru.liga.restaurant.waiter.model.request.DishRequest;
 import ru.liga.restaurant.waiter.model.request.OrderRequest;
+import ru.liga.restaurant.waiter.model.request.OrderToDishRequest;
 import ru.liga.restaurant.waiter.model.response.OrderResponse;
 import ru.liga.restaurant.waiter.model.response.OrderResponseList;
 import ru.liga.restaurant.waiter.repository.*;
@@ -27,6 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentRepository paymentRepository;
     private final WaiterOrderMapper waiterOrderMapper;
     private final OrderPositionsMapper orderPositionsMapper;
+    private final KitchenClient kitchenClient;
 
     @Override
     public OrderResponseList getOrderList() {
@@ -67,12 +72,35 @@ public class OrderServiceImpl implements OrderService {
 
         WaiterOrder finalOrder = waiterOrderRepository.save(savedOrder);
 
+//        отдаем заказ кухне
+        List<DishRequest> dishRequest = finalOrder.getPositions().stream()
+                .map(orderPositions -> {
+                    return DishRequest.builder()
+                            .dishId(orderPositions.getMenuPositionId().getId())
+                            .dishesNumber(orderPositions.getDishNum())
+                            .build();
+                })
+                .toList();
+        OrderToDishRequest orderToDishRequest = OrderToDishRequest.builder()
+                .kitchenOrderId(finalOrder.getOrderNo())
+                .waiterOrderNo(finalOrder.getWaiterId().getWaiterId())
+                .dishRequest(dishRequest)
+                .build();
+        kitchenClient.acceptOrder(orderToDishRequest);
+
         return waiterOrderMapper.toOrderResponse(finalOrder);
     }
 
     @Override
     public String getStatus(Long id) {
-        return findById(id).getStatus().toString();
+        return findById(id).getWaiterStatus().toString();
+    }
+
+    @Override
+    public void orderReady(Long id) {
+        WaiterOrder waiterOrder = findById(id);
+        waiterOrder.setWaiterStatus(WaiterStatus.READY);
+        waiterOrderRepository.save(waiterOrder);
     }
 
     private WaiterOrder findById(Long id) {

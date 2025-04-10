@@ -12,4 +12,6 @@ public interface OrderService {
     OrderResponse createOrder(OrderRequest orderRequest);
 
     String getStatus(Long id);
+
+    void orderReady(Long id);
 }

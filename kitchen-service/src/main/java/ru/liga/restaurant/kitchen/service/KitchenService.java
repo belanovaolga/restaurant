@@ -7,6 +7,6 @@ import ru.liga.restaurant.kitchen.model.response.OrderToDishResponse;
 public interface KitchenService {
     OrderToDishResponse acceptOrder(OrderToDishRequest orderToDishRequest);
     String rejectOrder(OrderToDishRequest orderToDishRequest);
-    OrderToDishListResponse readyOrder(Long id);
+    void readyOrder(Long id);
     OrderToDishListResponse getKitchenList();
 }

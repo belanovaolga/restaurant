@@ -1,6 +1,6 @@
 package ru.liga.restaurant.waiter.model.enums;
 
-public enum Status {
+public enum WaiterStatus {
     ACCEPT,
     PREPARE,
     READY

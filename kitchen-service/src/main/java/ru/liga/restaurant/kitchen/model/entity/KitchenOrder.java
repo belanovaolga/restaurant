@@ -1,7 +1,7 @@
 package ru.liga.restaurant.kitchen.model.entity;
 
 import lombok.Data;
-import ru.liga.restaurant.kitchen.model.enums.Status;
+import ru.liga.restaurant.kitchen.model.enums.KitchenStatus;
 
 import java.time.ZonedDateTime;
 
@@ -9,6 +9,6 @@ import java.time.ZonedDateTime;
 public class KitchenOrder {
     private Long kitchenOrderId;
     private Long waiterOrderNo;
-    private Status status;
+    private KitchenStatus kitchenStatus;
     private ZonedDateTime createDate;
 }

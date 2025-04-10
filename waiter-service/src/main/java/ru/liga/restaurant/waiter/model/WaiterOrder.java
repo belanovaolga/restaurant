@@ -3,7 +3,7 @@ package ru.liga.restaurant.waiter.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.liga.restaurant.waiter.model.enums.Status;
+import ru.liga.restaurant.waiter.model.enums.WaiterStatus;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -21,7 +21,7 @@ public class WaiterOrder {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private WaiterStatus waiterStatus;
 
     @Column(name = "create_date", nullable = false)
     private ZonedDateTime createDate;

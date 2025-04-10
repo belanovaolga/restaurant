@@ -1,7 +1,7 @@
 package ru.liga.restaurant.waiter.model.response;
 
 import lombok.Data;
-import ru.liga.restaurant.waiter.model.enums.Status;
+import ru.liga.restaurant.waiter.model.enums.WaiterStatus;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class OrderResponse {
     private Long orderNo;
-    private Status status;
+    private WaiterStatus waiterStatus;
     private ZonedDateTime createDate;
     private WaiterAccountResponse waiterId;
     private String tableNo;

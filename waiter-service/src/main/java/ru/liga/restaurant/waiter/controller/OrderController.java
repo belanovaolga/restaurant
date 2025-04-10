@@ -32,4 +32,9 @@ public class OrderController {
     public String getStatus(@PathVariable Long id) {
         return orderService.getStatus(id);
     }
+
+    @PutMapping("/{id}")
+    void orderReady(@PathVariable Long id) {
+        orderService.orderReady(id);
+    }
 }

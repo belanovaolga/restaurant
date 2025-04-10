@@ -14,3 +14,18 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true # Автоматический преобразует last_name -> lastName в resultMap
   type-handlers-package: ru.liga.restaurant.kitchen.custom
+
+app:
+  communication:
+    mode: feign  # или feign
+  grpc:
+    waiter:
+      host: localhost
+      port: 8070
+  feign:
+    waiter:
+      url: http://localhost:8070/order
+
+service:
+  host:
+    waiter: localhost:8070/order

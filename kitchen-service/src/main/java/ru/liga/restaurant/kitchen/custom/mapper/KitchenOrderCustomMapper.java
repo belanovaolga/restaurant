@@ -16,4 +16,6 @@ public interface KitchenOrderCustomMapper {
     List<KitchenOrder> findAll();
 
     Optional<KitchenOrder> findById(Long id);
+
+    void updateStatus(KitchenOrder kitchenOrder);
 }

@@ -5,13 +5,13 @@
     <resultMap id="kitchenOrderResultMap" type="ru.liga.restaurant.kitchen.model.entity.KitchenOrder">
         <id property="kitchenOrderId" column="kitchen_order_id"/>
         <result property="waiterOrderNo" column="waiter_order_no"/>
-        <result property="status" column="status"/>
+        <result property="kitchenStatus" column="status"/>
         <result property="createDate" column="create_date"/>
     </resultMap>
 
     <insert id="insert" parameterType="ru.liga.restaurant.kitchen.model.entity.KitchenOrder" useGeneratedKeys="true" keyProperty="kitchenOrderId" keyColumn="kitchen_order_id">
         INSERT INTO kitchen.kitchen_order (waiter_order_no, status, create_date)
-        VALUES (#{order.waiterOrderNo}, #{order.status}, #{order.createDate})
+        VALUES (#{order.waiterOrderNo}, #{order.kitchenStatus}, #{order.createDate})
     </insert>
 
     <select id="findAll" resultMap="kitchenOrderResultMap">
@@ -24,5 +24,13 @@
         FROM kitchen.kitchen_order
         WHERE kitchen_order_id = #{id}
     </select>
+
+    <update id="updateStatus" parameterType="map">
+        UPDATE kitchen.kitchen_order
+        SET
+        status = #{status},
+        WHERE
+        kitchen_order_id = #{kitchenOrderId}
+    </update>
 
 </mapper>

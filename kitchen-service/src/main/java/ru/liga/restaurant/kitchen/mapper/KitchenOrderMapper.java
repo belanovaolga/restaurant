@@ -10,7 +10,7 @@ import ru.liga.restaurant.kitchen.model.response.KitchenOrderResponse;
 public interface KitchenOrderMapper {
     KitchenOrderResponse toKitchenOrderResponse(KitchenOrder kitchenOrder);
 
-    @Mapping(target = "status", expression = "java(ru.liga.restaurant.kitchen.model.enums.Status.AWAITING)")
+    @Mapping(target = "kitchenStatus", expression = "java(ru.liga.restaurant.kitchen.model.enums.KitchenStatus.AWAITING)")
     @Mapping(target = "createDate", expression = "java(java.time.ZonedDateTime.now())")
     KitchenOrder toKitchenOrder(OrderToDishRequest orderToDishRequest);
 }

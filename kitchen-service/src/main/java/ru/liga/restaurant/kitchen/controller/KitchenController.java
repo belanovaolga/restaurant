@@ -24,8 +24,8 @@ public class KitchenController {
     }
 
     @GetMapping("/{id}")
-    public OrderToDishListResponse readyOrder(@PathVariable Long id) {
-        return kitchenService.readyOrder(id);
+    public void readyOrder(@PathVariable Long id) {
+        kitchenService.readyOrder(id);
     }
 
     @GetMapping

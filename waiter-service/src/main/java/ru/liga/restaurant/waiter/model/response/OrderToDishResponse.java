@@ -1,4 +1,4 @@
-package ru.liga.restaurant.kitchen.model.response;
+package ru.liga.restaurant.waiter.model.response;
 
 import lombok.Data;
 

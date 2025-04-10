@@ -17,6 +17,6 @@ public interface WaiterOrderMapper {
     @Mapping(target = "orderNo", ignore = true)
     @Mapping(target = "payment", expression = "java(ru.liga.restaurant.waiter.model.Payment.builder().build())")
     @Mapping(target = "positions", ignore = true)
-    @Mapping(target = "status", expression = "java(ru.liga.restaurant.waiter.model.enums.Status.ACCEPT)")
+    @Mapping(target = "waiterStatus", expression = "java(ru.liga.restaurant.waiter.model.enums.WaiterStatus.ACCEPT)")
     WaiterOrder toWaiterOrder(OrderRequest orderRequest, WaiterAccount waiterAccount);
 }
