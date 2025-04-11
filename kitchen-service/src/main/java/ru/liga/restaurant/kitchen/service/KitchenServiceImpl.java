@@ -38,6 +38,9 @@ public class KitchenServiceImpl implements KitchenService {
     @Override
     @Transactional
     public OrderToDishResponse acceptOrder(OrderToDishRequest orderToDishRequest) {
+        KitchenOrder kitchenOrder = kitchenOrderMapper.toKitchenOrder(orderToDishRequest);
+        kitchenOrderCustomMapper.insert(kitchenOrder);
+
         List<DishResponse> dishResponseList = orderToDishRequest.getDishRequest().stream()
                 .map(dishRequest -> {
                     Dish dish = findDishById(dishRequest.getDishId());
@@ -54,15 +57,12 @@ public class KitchenServiceImpl implements KitchenService {
                     dish.setBalance(currentBalance - balance);
                     dishCustomMapper.update(dish);
 
-                    OrderToDish orderToDish = orderToDishMapper.toOrderToDish(orderToDishRequest, dishRequest);
+                    OrderToDish orderToDish = orderToDishMapper.toOrderToDish(orderToDishRequest, kitchenOrder, dishRequest);
                     orderToDishCustomMapper.insert(orderToDish);
 
                     return dishMapper.toDishResponse(dish);
                 })
                 .toList();
-
-        KitchenOrder kitchenOrder = kitchenOrderMapper.toKitchenOrder(orderToDishRequest);
-        kitchenOrderCustomMapper.insert(kitchenOrder);
 
         return orderToDishMapper.toOrderToDishResponse(kitchenOrderMapper.toKitchenOrderResponse(kitchenOrder), dishResponseList);
     }
@@ -87,17 +87,18 @@ public class KitchenServiceImpl implements KitchenService {
     }
 
     @Override
+    @Transactional
     public void readyOrder(Long id) {
-        KitchenOrder kitchenOrder = findKitchenOrderById(id);
-        kitchenOrder.setKitchenStatus(KitchenStatus.READY);
+        KitchenOrder kitchenOrder = findById(id);
+        kitchenOrder.setStatus(KitchenStatus.READY);
         kitchenOrderCustomMapper.updateStatus(kitchenOrder);
 
-        waiterFeignClient.orderReady(id);
+        waiterFeignClient.orderReady(kitchenOrder.getWaiterOrderNo());
     }
 
     @Override
     public OrderToDishListResponse getKitchenList() {
-        return null;
+        return OrderToDishListResponse.builder().build();
 
 //        List<OrderToDish> orderToDishCustomMapperAll = orderToDishCustomMapper.findAll();
 //        List<OrderToDishResponse> orderToDishResponseList = orderToDishCustomMapperAll.stream()
@@ -119,9 +120,9 @@ public class KitchenServiceImpl implements KitchenService {
                         .httpStatus(HttpStatus.NOT_FOUND).build());
     }
 
-    private KitchenOrder findKitchenOrderById(Long kitchenOrderId) {
-        return kitchenOrderCustomMapper.findById(kitchenOrderId)
-                .orElseThrow(() -> OrderNotFoundException.builder().message("Заказа " + kitchenOrderId + " не существует")
+    private KitchenOrder findById(Long id) {
+        return kitchenOrderCustomMapper.findById(id)
+                .orElseThrow(() -> OrderNotFoundException.builder().message("Заказа " + id + " не существует")
                         .httpStatus(HttpStatus.NOT_FOUND).build());
     }
 }

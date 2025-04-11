@@ -9,22 +9,11 @@ spring:
     change-log: classpath:/db/db.changelog.xml
 
 mybatis:
-  mapper-locations: classpath:mybatis/mappers/*.xml #Путь до маппера типа xml
-  type-aliases-package: ru.liga.restaurant.kitchen.model.entity # Путь куда генерируются сущности
+  mapper-locations: classpath:mybatis/mappers/*.xml
+  type-aliases-package: ru.liga.restaurant.kitchen.model.entity
   configuration:
-    map-underscore-to-camel-case: true # Автоматический преобразует last_name -> lastName в resultMap
+    map-underscore-to-camel-case: true
   type-handlers-package: ru.liga.restaurant.kitchen.custom
-
-app:
-  communication:
-    mode: feign  # или feign
-  grpc:
-    waiter:
-      host: localhost
-      port: 8070
-  feign:
-    waiter:
-      url: http://localhost:8070/order
 
 service:
   host:

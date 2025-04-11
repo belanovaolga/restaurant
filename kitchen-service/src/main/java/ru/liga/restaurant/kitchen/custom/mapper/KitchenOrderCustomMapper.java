@@ -18,4 +18,6 @@ public interface KitchenOrderCustomMapper {
     Optional<KitchenOrder> findById(Long id);
 
     void updateStatus(KitchenOrder kitchenOrder);
+
+    Optional<KitchenOrder> findByWaiterOrderNoId(Long waiterOrderId);
 }

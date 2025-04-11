@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.liga.restaurant.waiter.client.KitchenClient;
 import ru.liga.restaurant.waiter.exception.NotFoundException;
+import ru.liga.restaurant.waiter.feign.KitchenFeignClient;
 import ru.liga.restaurant.waiter.mapper.OrderPositionsMapper;
 import ru.liga.restaurant.waiter.mapper.WaiterOrderMapper;
 import ru.liga.restaurant.waiter.model.*;
@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentRepository paymentRepository;
     private final WaiterOrderMapper waiterOrderMapper;
     private final OrderPositionsMapper orderPositionsMapper;
-    private final KitchenClient kitchenClient;
+    private final KitchenFeignClient kitchenFeignClient;
 
     @Override
     public OrderResponseList getOrderList() {
@@ -72,7 +72,6 @@ public class OrderServiceImpl implements OrderService {
 
         WaiterOrder finalOrder = waiterOrderRepository.save(savedOrder);
 
-//        отдаем заказ кухне
         List<DishRequest> dishRequest = finalOrder.getPositions().stream()
                 .map(orderPositions -> {
                     return DishRequest.builder()
@@ -86,20 +85,20 @@ public class OrderServiceImpl implements OrderService {
                 .waiterOrderNo(finalOrder.getWaiterId().getWaiterId())
                 .dishRequest(dishRequest)
                 .build();
-        kitchenClient.acceptOrder(orderToDishRequest);
+        kitchenFeignClient.acceptOrder(orderToDishRequest);
 
         return waiterOrderMapper.toOrderResponse(finalOrder);
     }
 
     @Override
     public String getStatus(Long id) {
-        return findById(id).getWaiterStatus().toString();
+        return findById(id).getStatus().toString();
     }
 
     @Override
     public void orderReady(Long id) {
         WaiterOrder waiterOrder = findById(id);
-        waiterOrder.setWaiterStatus(WaiterStatus.READY);
+        waiterOrder.setStatus(WaiterStatus.READY);
         waiterOrderRepository.save(waiterOrder);
     }
 

@@ -9,6 +9,6 @@ import java.time.ZonedDateTime;
 public class KitchenOrder {
     private Long kitchenOrderId;
     private Long waiterOrderNo;
-    private KitchenStatus kitchenStatus;
+    private KitchenStatus status;
     private ZonedDateTime createDate;
 }

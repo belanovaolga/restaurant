@@ -2,6 +2,7 @@ package ru.liga.restaurant.kitchen.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import ru.liga.restaurant.kitchen.model.entity.KitchenOrder;
 import ru.liga.restaurant.kitchen.model.entity.OrderToDish;
 import ru.liga.restaurant.kitchen.model.request.DishRequest;
 import ru.liga.restaurant.kitchen.model.request.OrderToDishRequest;
@@ -17,5 +18,6 @@ public interface OrderToDishMapper {
 
     @Mapping(target = "dishesNumber", source = "dishRequest.dishesNumber")
     @Mapping(target = "dishId", source = "dishRequest.dishId")
-    OrderToDish toOrderToDish(OrderToDishRequest orderToDishRequest, DishRequest dishRequest);
+    @Mapping(target = "kitchenOrderId", source = "kitchenOrder.kitchenOrderId")
+    OrderToDish toOrderToDish(OrderToDishRequest orderToDishRequest, KitchenOrder kitchenOrder, DishRequest dishRequest);
 }

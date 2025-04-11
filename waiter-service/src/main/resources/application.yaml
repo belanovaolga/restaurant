@@ -19,17 +19,6 @@ spring:
       hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
 
-app:
-  communication:
-    mode: feign  # или feign
-  grpc:
-    kitchen:
-      host: localhost
-      port: 8080
-  feign:
-    kitchen:
-      url: http://localhost:8080/kitchen
-
 service:
   host:
     kitchen: localhost:8080/kitchen

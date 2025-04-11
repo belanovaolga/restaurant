@@ -3,8 +3,8 @@ package ru.liga.restaurant.waiter.controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
-import ru.liga.restaurant.waiter.exception.OrderAlreadyExistException;
 import ru.liga.restaurant.waiter.exception.NotFoundException;
+import ru.liga.restaurant.waiter.exception.OrderAlreadyExistException;
 
 @RestControllerAdvice
 public class ExceptionApiHandler {

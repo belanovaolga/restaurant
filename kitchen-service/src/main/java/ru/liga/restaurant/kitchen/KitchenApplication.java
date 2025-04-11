@@ -10,5 +10,4 @@ public class KitchenApplication {
     public static void main(String[] args) {
         SpringApplication.run(KitchenApplication.class, args);
     }
-
 }

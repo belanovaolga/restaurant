@@ -21,7 +21,7 @@ public class WaiterOrder {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private WaiterStatus waiterStatus;
+    private WaiterStatus status;
 
     @Column(name = "create_date", nullable = false)
     private ZonedDateTime createDate;

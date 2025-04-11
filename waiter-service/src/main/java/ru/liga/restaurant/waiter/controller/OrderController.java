@@ -33,7 +33,7 @@ public class OrderController {
         return orderService.getStatus(id);
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/{id}")
     void orderReady(@PathVariable Long id) {
         orderService.orderReady(id);
     }
