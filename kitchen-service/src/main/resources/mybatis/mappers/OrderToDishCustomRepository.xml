@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ru.liga.restaurant.kitchen.custom.repository.OrderToDishCustomRepository">
+
+    <resultMap id="orderToDishResultMap" type="ru.liga.restaurant.kitchen.model.entity.OrderToDish">
+        <result property="dishesNumber" column="dishes_number"/>
+
+        <association property="kitchenOrder" javaType="ru.liga.restaurant.kitchen.model.entity.KitchenOrder">
+            <id property="kitchenOrderId" column="kitchen_order_id"/>
+            <result property="waiterOrderNo" column="waiter_order_no"/>
+            <result property="status" column="status"/>
+            <result property="createDate" column="create_date"/>
+        </association>
+
+        <association property="dish" javaType="ru.liga.restaurant.kitchen.model.entity.Dish">
+            <id property="dishId" column="dish_id"/>
+            <result property="balance" column="balance"/>
+            <result property="shortName" column="short_name"/>
+            <result property="dishComposition" column="dish_composition"/>
+        </association>
+    </resultMap>
+
+    <insert id="insert" parameterType="ru.liga.restaurant.kitchen.model.entity.OrderToDish">
+        INSERT INTO kitchen.order_to_dish (kitchen_order_id, dish_id, dishes_number)
+        VALUES (#{kitchenOrder.kitchenOrderId}, #{dish.dishId}, #{dishesNumber})
+    </insert>
+
+    <select id="findByCompositeKey" resultMap="orderToDishResultMap">
+        SELECT
+        otd.kitchen_order_id,
+        otd.dish_id,
+        otd.dishes_number,
+        ko.waiter_order_no,
+        ko.status,
+        ko.create_date,
+        d.balance,
+        d.short_name,
+        d.dish_composition
+        FROM kitchen.order_to_dish otd
+        JOIN kitchen.kitchen_order ko ON otd.kitchen_order_id = ko.kitchen_order_id
+        JOIN kitchen.dish d ON otd.dish_id = d.dish_id
+        WHERE otd.kitchen_order_id = #{kitchenOrderId}
+        AND otd.dish_id = #{dishId}
+    </select>
+
+    <select id="findByKitchenOrderId" parameterType="java.lang.Long" resultMap="orderToDishResultMap">
+        SELECT
+        otd.kitchen_order_id,
+        otd.dish_id,
+        otd.dishes_number,
+        ko.waiter_order_no,
+        ko.status,
+        ko.create_date,
+        d.balance,
+        d.short_name,
+        d.dish_composition
+        FROM kitchen.order_to_dish otd
+        JOIN kitchen.kitchen_order ko ON otd.kitchen_order_id = ko.kitchen_order_id
+        JOIN kitchen.dish d ON otd.dish_id = d.dish_id
+        WHERE otd.kitchen_order_id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="orderToDishResultMap">
+        SELECT
+        otd.kitchen_order_id,
+        otd.dish_id,
+        otd.dishes_number,
+        ko.waiter_order_no,
+        ko.status,
+        ko.create_date,
+        d.balance,
+        d.short_name,
+        d.dish_composition
+        FROM kitchen.order_to_dish otd
+        JOIN kitchen.kitchen_order ko ON otd.kitchen_order_id = ko.kitchen_order_id
+        JOIN kitchen.dish d ON otd.dish_id = d.dish_id
+        ORDER BY otd.kitchen_order_id, otd.dish_id
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+</mapper>
+

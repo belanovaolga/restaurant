@@ -1,6 +1,14 @@
 package ru.liga.restaurant.waiter.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,9 +28,9 @@ public class OrderPositions {
 
     @ManyToOne
     @JoinColumn(name = "order_no", nullable = false)
-    private WaiterOrder orderNo;
+    private WaiterOrder waiterOrder;
 
     @ManyToOne
     @JoinColumn(name = "menu_position_id", nullable = false)
-    private Menu menuPositionId;
+    private Menu menu;
 }

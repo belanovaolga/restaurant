@@ -19,6 +19,15 @@ spring:
       hibernate:
       dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      number-topic: orderToKitchenTopic
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
 service:
   host:
     kitchen: localhost:8080/kitchen

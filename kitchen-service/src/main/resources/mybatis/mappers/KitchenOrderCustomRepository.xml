@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ru.liga.restaurant.kitchen.custom.mapper.KitchenOrderCustomMapper">
+<mapper namespace="ru.liga.restaurant.kitchen.custom.repository.KitchenOrderCustomRepository">
 
     <resultMap id="kitchenOrderResultMap" type="ru.liga.restaurant.kitchen.model.entity.KitchenOrder">
         <id property="kitchenOrderId" column="kitchen_order_id"/>
@@ -12,7 +12,7 @@
     <insert id="insert" parameterType="ru.liga.restaurant.kitchen.model.entity.KitchenOrder" useGeneratedKeys="true"
             keyProperty="kitchenOrderId" keyColumn="kitchen_order_id">
         INSERT INTO kitchen.kitchen_order (waiter_order_no, status, create_date)
-        VALUES (#{order.waiterOrderNo}, #{order.status}, #{order.createDate})
+        VALUES (#{waiterOrderNo}, #{status}, #{createDate})
     </insert>
 
     <select id="findAll" resultMap="kitchenOrderResultMap">
@@ -24,12 +24,6 @@
         SELECT kitchen_order_id, waiter_order_no, status, create_date
         FROM kitchen.kitchen_order
         WHERE kitchen_order_id = #{id}
-    </select>
-
-    <select id="findByWaiterOrderNoId" parameterType="java.lang.Long" resultMap="kitchenOrderResultMap">
-        SELECT kitchen_order_id, waiter_order_no, status, create_date
-        FROM kitchen.kitchen_order
-        WHERE waiter_order_no = #{id}
     </select>
 
     <update id="updateStatus" parameterType="map">

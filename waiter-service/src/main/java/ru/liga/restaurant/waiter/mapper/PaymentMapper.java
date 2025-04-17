@@ -9,7 +9,7 @@ import ru.liga.restaurant.waiter.model.response.PaymentResponse;
 @Mapper(componentModel = "spring")
 public interface PaymentMapper {
     @Mapping(target = "paymentDate", expression = "java(java.time.ZonedDateTime.now())")
-    Payment toPayment(WaiterOrder order, String paymentType, Double paymentSum);
+    Payment toPayment(WaiterOrder waiterOrder, String paymentType, Double paymentSum);
 
     PaymentResponse toPaymentResponse(Payment payment);
 }

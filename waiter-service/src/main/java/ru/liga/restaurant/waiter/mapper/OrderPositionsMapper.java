@@ -10,9 +10,12 @@ import ru.liga.restaurant.waiter.model.response.OrderPositionsResponse;
 @Mapper(componentModel = "spring")
 public interface OrderPositionsMapper {
     @Mapping(target = "compositionId", ignore = true)
-    @Mapping(target = "orderNo", source = "waiterOrder")
-    @Mapping(target = "menuPositionId", ignore = true)
+    @Mapping(target = "menu", ignore = true)
     OrderPositions toOrderPositions(OrderPositionsRequest orderPositionsRequest, WaiterOrder waiterOrder);
 
+    @Mapping(target = "menuResponse", source = "menu")
     OrderPositionsResponse toOrderPositionsResponse(OrderPositions orderPositions);
+
+    @Mapping(target = "menuPositionId", source = "menu.id")
+    OrderPositionsRequest toOrderPositionsRequest(OrderPositions orderPositions);
 }

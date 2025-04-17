@@ -4,25 +4,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 import ru.liga.restaurant.kitchen.exception.InsufficientStockException;
-import ru.liga.restaurant.kitchen.exception.OrderAlreadyExistException;
-import ru.liga.restaurant.kitchen.exception.OrderNotFoundException;
-import ru.liga.restaurant.kitchen.exception.OrderNotReadyException;
+import ru.liga.restaurant.kitchen.exception.NotFoundException;
 
 @RestControllerAdvice
 public class ExceptionApiHandler {
-    @ExceptionHandler(OrderAlreadyExistException.class)
-    public ResponseStatusException orderAlreadyExistException(OrderAlreadyExistException orderAlreadyExistException) {
-        return new ResponseStatusException(orderAlreadyExistException.getHttpStatus(), orderAlreadyExistException.getMessage());
-    }
-
-    @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseStatusException orderNotFoundException(OrderNotFoundException orderNotFoundException) {
-        return new ResponseStatusException(orderNotFoundException.getHttpStatus(), orderNotFoundException.getMessage());
-    }
-
-    @ExceptionHandler(OrderNotReadyException.class)
-    public ResponseStatusException orderNotReadyException(OrderNotReadyException orderNotReadyException) {
-        return new ResponseStatusException(orderNotReadyException.getHttpStatus(), orderNotReadyException.getMessage());
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseStatusException orderNotFoundException(NotFoundException notFoundException) {
+        return new ResponseStatusException(notFoundException.getHttpStatus(), notFoundException.getMessage());
     }
 
     @ExceptionHandler(InsufficientStockException.class)

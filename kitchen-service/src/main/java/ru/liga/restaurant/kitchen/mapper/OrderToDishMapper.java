@@ -2,13 +2,14 @@ package ru.liga.restaurant.kitchen.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import ru.liga.restaurant.kitchen.model.entity.Dish;
 import ru.liga.restaurant.kitchen.model.entity.KitchenOrder;
 import ru.liga.restaurant.kitchen.model.entity.OrderToDish;
 import ru.liga.restaurant.kitchen.model.request.DishRequest;
-import ru.liga.restaurant.kitchen.model.request.OrderToDishRequest;
 import ru.liga.restaurant.kitchen.model.response.DishResponse;
 import ru.liga.restaurant.kitchen.model.response.KitchenOrderResponse;
 import ru.liga.restaurant.kitchen.model.response.OrderToDishResponse;
+import ru.liga.restaurant.kitchen.model.response.OrderToDishResponseForKitchen;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ import java.util.List;
 public interface OrderToDishMapper {
     OrderToDishResponse toOrderToDishResponse(KitchenOrderResponse kitchenOrderResponse, List<DishResponse> dishResponse);
 
+    OrderToDishResponseForKitchen toOrderToDishResponseForKitchen(KitchenOrderResponse kitchenOrderResponse, DishResponse dishResponse);
+
     @Mapping(target = "dishesNumber", source = "dishRequest.dishesNumber")
-    @Mapping(target = "dishId", source = "dishRequest.dishId")
-    @Mapping(target = "kitchenOrderId", source = "kitchenOrder.kitchenOrderId")
-    OrderToDish toOrderToDish(OrderToDishRequest orderToDishRequest, KitchenOrder kitchenOrder, DishRequest dishRequest);
+    OrderToDish toOrderToDish(KitchenOrder kitchenOrder, Dish dish, DishRequest dishRequest);
 }

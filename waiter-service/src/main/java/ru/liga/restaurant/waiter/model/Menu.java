@@ -1,6 +1,13 @@
 package ru.liga.restaurant.waiter.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +30,6 @@ public class Menu {
     @Column(name = "dish_cost", nullable = false)
     private Double dishCost;
 
-    @OneToMany(mappedBy = "menuPositionId")
+    @OneToMany(mappedBy = "menu")
     private List<OrderPositions> orderPositions;
 }
