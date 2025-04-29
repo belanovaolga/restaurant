@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="2024-03-30 20:13:00" author="olya">
+        <sqlFile path="sql/create_table_kitchen_order.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="sql/rollback/kitchen-order-table-rollback.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2024-03-30 20:14:00" author="olya">
+        <sqlFile path="sql/create_table_dish.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="sql/rollback/dish-table-rollback.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2024-03-30 20:15:00" author="olya">
+        <sqlFile path="sql/create_table_order_to_dish.sql"
+                 relativeToChangelogFile="true"/>
+        <rollback>
+            <sqlFile path="sql/rollback/order-to-dish-table-rollback.sql"
+                     relativeToChangelogFile="true"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2024-03-30 20:16:00" author="olya">
+        <sqlFile path="sql/test_data.sql"
+                 relativeToChangelogFile="true"/>
+    </changeSet>
+
+</databaseChangeLog>

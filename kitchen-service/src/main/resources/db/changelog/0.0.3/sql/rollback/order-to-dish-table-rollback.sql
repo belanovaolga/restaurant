@@ -1,0 +1,1 @@
+drop table IF EXISTS kitchen.order_to_dish;

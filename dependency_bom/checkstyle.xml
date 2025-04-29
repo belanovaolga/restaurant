@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <module name="LineLength">
+        <property name="fileExtensions" value="java"/>
+        <property name="max" value="120"/>
+        <property name="ignorePattern"
+                  value="^( *\* *([^ ]+|\{@code .*|&lt;a href=&quot;[^&quot;]+&quot;&gt;)|(package|import) .*)$"/>
+    </module>
+
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="false"/>
+    </module>
+
+    <module name="TreeWalker">
+        <module name="AnnotationLocation">
+            <property name="tokens"
+                      value="ANNOTATION_DEF,ANNOTATION_FIELD_DEF,PACKAGE_DEF,ENUM_CONSTANT_DEF,VARIABLE_DEF"/>
+            <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+        </module>
+
+        <module name="AvoidStarImport"/>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+    </module>
+</module>

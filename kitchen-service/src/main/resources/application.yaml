@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/kitchen
+    username: postgres
+    password: 1234
+
+  liquibase:
+    change-log: classpath:/db/db.changelog.xml
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: group1
+      auto-offset-reset: earliest
+    producer:
+      properties:
+        acks: all
+
+mybatis:
+  mapper-locations: classpath:mybatis/mappers/*.xml
+  type-aliases-package: ru.liga.restaurant.kitchen.model.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  type-handlers-package: ru.liga.restaurant.kitchen.custom
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+service:
+  host:
+    waiter: localhost:8070/order
+
+grpc:
+  client:
+    order-service:
+      host: localhost
+      port: 9022
