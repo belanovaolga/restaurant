@@ -20,7 +20,7 @@ import ru.liga.restaurant.waiter.mapper.WaiterAccountMapper;
 import ru.liga.restaurant.waiter.mapper.WaiterAccountMapperImpl;
 import ru.liga.restaurant.waiter.mapper.WaiterOrderMapper;
 import ru.liga.restaurant.waiter.mapper.WaiterOrderMapperImpl;
-import ru.liga.restaurant.waiter.model.WaiterOrder;
+import ru.liga.restaurant.waiter.model.entity.WaiterOrder;
 import ru.liga.restaurant.waiter.model.response.OrderResponse;
 import ru.liga.restaurant.waiter.repository.MenuRepository;
 import ru.liga.restaurant.waiter.repository.OrderPositionsRepository;
@@ -69,7 +69,7 @@ class OrderControllerTest {
         WaiterOrder waiterOrder = generator.nextObject(WaiterOrder.class);
         OrderResponse orderResponse = waiterOrderMapper.toOrderResponse(waiterOrder);
 
-        Mockito.when(waiterOrderRepository.findById(waiterOrder.getOrderNo())).thenReturn(Optional.of(waiterOrder));
+        Mockito.when(waiterOrderRepository.findByOrderNo(waiterOrder.getOrderNo())).thenReturn(Optional.of(waiterOrder));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/order/{id}", waiterOrder.getOrderNo()))
                 .andExpect(status().isOk())

@@ -17,11 +17,11 @@ import ru.liga.restaurant.waiter.mapper.WaiterAccountMapper;
 import ru.liga.restaurant.waiter.mapper.WaiterAccountMapperImpl;
 import ru.liga.restaurant.waiter.mapper.WaiterOrderMapper;
 import ru.liga.restaurant.waiter.mapper.WaiterOrderMapperImpl;
-import ru.liga.restaurant.waiter.model.Menu;
-import ru.liga.restaurant.waiter.model.OrderPositions;
-import ru.liga.restaurant.waiter.model.Payment;
-import ru.liga.restaurant.waiter.model.WaiterAccount;
-import ru.liga.restaurant.waiter.model.WaiterOrder;
+import ru.liga.restaurant.waiter.model.entity.Menu;
+import ru.liga.restaurant.waiter.model.entity.OrderPositions;
+import ru.liga.restaurant.waiter.model.entity.Payment;
+import ru.liga.restaurant.waiter.model.entity.WaiterAccount;
+import ru.liga.restaurant.waiter.model.entity.WaiterOrder;
 import ru.liga.restaurant.waiter.model.enums.WaiterStatus;
 import ru.liga.restaurant.waiter.model.request.DishRequest;
 import ru.liga.restaurant.waiter.model.request.OrderRequest;
@@ -104,7 +104,7 @@ class OrderServiceTest {
     void shouldGetOrder() {
         WaiterOrder waiterOrder = generator.nextObject(WaiterOrder.class);
         Optional<WaiterOrder> optionalWaiterOrder = Optional.of(waiterOrder);
-        Mockito.when(waiterOrderRepository.findById(waiterOrder.getOrderNo())).thenReturn(optionalWaiterOrder);
+        Mockito.when(waiterOrderRepository.findByOrderNo(waiterOrder.getOrderNo())).thenReturn(optionalWaiterOrder);
         OrderResponse expectedOrderResponse = waiterOrderMapper.toOrderResponse(waiterOrder);
 
         OrderResponse actualOrderResponse = orderService.getOrder(waiterOrder.getOrderNo());
@@ -131,7 +131,7 @@ class OrderServiceTest {
         Payment payment = generator.nextObject(Payment.class);
         waiterOrder.setPayment(payment);
 
-        Mockito.doNothing().when(kitchenFeignClient).rejectOrder(orderRequest);
+        Mockito.doNothing().when(kitchenFeignClient).checkOrder(orderRequest);
         Mockito.when(waiterAccountRepository.findById(orderRequest.getWaiterId())).thenReturn(Optional.of(waiterAccount));
         Mockito.when(waiterOrderRepository.save(any(WaiterOrder.class))).thenReturn(waiterOrder);
         List<OrderPositions> positions = new ArrayList<>();
@@ -175,7 +175,7 @@ class OrderServiceTest {
     void shouldCreateOrder_whenWaiterAccountNotFound() {
         OrderRequest orderRequest = generator.nextObject(OrderRequest.class);
 
-        Mockito.doNothing().when(kitchenFeignClient).rejectOrder(orderRequest);
+        Mockito.doNothing().when(kitchenFeignClient).checkOrder(orderRequest);
         Mockito.when(waiterOrderRepository.findById(orderRequest.getWaiterId())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> {
@@ -190,7 +190,7 @@ class OrderServiceTest {
         waiterAccount.setWaiterId(orderRequest.getWaiterId());
         WaiterOrder waiterOrder = waiterOrderMapper.toWaiterOrder(orderRequest, waiterAccount);
 
-        Mockito.doNothing().when(kitchenFeignClient).rejectOrder(orderRequest);
+        Mockito.doNothing().when(kitchenFeignClient).checkOrder(orderRequest);
         Mockito.when(waiterAccountRepository.findById(orderRequest.getWaiterId())).thenReturn(Optional.of(waiterAccount));
         Mockito.when(waiterOrderRepository.save(any(WaiterOrder.class)))
                 .thenReturn(waiterOrder);
@@ -215,7 +215,7 @@ class OrderServiceTest {
         WaiterOrder waiterOrder = generator.nextObject(WaiterOrder.class);
         StatusResponse expectedStatusResponse = StatusResponse.builder().waiterStatus(waiterOrder.getStatus()).build();
 
-        Mockito.when(waiterOrderRepository.findById(waiterOrder.getOrderNo())).thenReturn(Optional.of(waiterOrder));
+        Mockito.when(waiterOrderRepository.findStatusByOrderNo(waiterOrder.getOrderNo())).thenReturn(Optional.of(waiterOrder.getStatus()));
 
         StatusResponse actualStatus = orderService.getStatus(waiterOrder.getOrderNo());
 
@@ -236,6 +236,14 @@ class OrderServiceTest {
     void shouldOrderReady() {
         WaiterOrder waiterOrder = generator.nextObject(WaiterOrder.class);
         Mockito.doNothing().when(waiterOrderRepository).updateStatus(waiterOrder.getOrderNo(), WaiterStatus.READY);
+
+        assertDoesNotThrow(() -> orderService.orderReady(waiterOrder.getOrderNo()));
+    }
+
+    @Test
+    void shouldRejectOrder() {
+        WaiterOrder waiterOrder = generator.nextObject(WaiterOrder.class);
+        Mockito.doNothing().when(waiterOrderRepository).updateStatus(waiterOrder.getOrderNo(), WaiterStatus.DELETED);
 
         assertDoesNotThrow(() -> orderService.orderReady(waiterOrder.getOrderNo()));
     }
