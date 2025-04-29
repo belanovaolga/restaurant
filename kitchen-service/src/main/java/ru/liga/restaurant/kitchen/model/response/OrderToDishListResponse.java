@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * DTO ответа со списком всех заказов и связанных с ними блюд
+ */
 @Data
 @Builder
 @Schema(description = "Список ответов с информацией о заказах и блюдах")

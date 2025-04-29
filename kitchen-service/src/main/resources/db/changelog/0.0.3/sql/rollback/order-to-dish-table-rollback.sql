@@ -1,1 +1,1 @@
-drop table IF EXISTS order_to_dish;
+drop table IF EXISTS kitchen.order_to_dish;

@@ -1,0 +1,93 @@
+{
+  "info": {
+    "_postman_id": "fef1e16d-9f41-4f89-b337-088494c8a3fc",
+    "name": "kitchen-service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "32679736"
+  },
+  "item": [
+    {
+      "name": "accept-order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"kitchenOrderId\" : 16,\r\n    \"waiterOrderNo\" : 32,\r\n    \"positions\" : [\r\n        {\r\n            \"dishId\" : 8,\r\n            \"dishesNumber\" : 5\r\n        },\r\n        {\r\n            \"dishId\" : 8,\r\n            \"dishesNumber\" : 5\r\n        }\r\n\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:8080/kitchen"
+      },
+      "response": []
+    },
+    {
+      "name": "get-kitchen-list",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/kitchen?pageNumber=1&size=4",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "kitchen"
+          ],
+          "query": [
+            {
+              "key": "pageNumber",
+              "value": "1"
+            },
+            {
+              "key": "size",
+              "value": "4"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "reject-order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "http://localhost:8080/kitchen/reject/66"
+      },
+      "response": []
+    },
+    {
+      "name": "ready-order",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8080/kitchen/45"
+      },
+      "response": []
+    },
+    {
+      "name": "check-order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"waiterId\" : 1,\r\n    \"tableNo\" : \"A15\",\r\n    \"paymentType\" : \"CARD\",\r\n    \"positions\" : [\r\n        {\r\n            \"dishNum\" : 1,\r\n            \"menuPositionId\" : 9\r\n        },\r\n        {\r\n            \"dishNum\" : 1,\r\n            \"menuPositionId\" : 8\r\n        }\r\n\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:8080/kitchen/check"
+      },
+      "response": []
+    }
+  ]
+}

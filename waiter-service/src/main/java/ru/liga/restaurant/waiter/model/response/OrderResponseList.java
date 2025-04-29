@@ -6,6 +6,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * DTO ответа со списком заказов
+ */
 @Data
 @Builder
 @Schema(description = "Список заказов")

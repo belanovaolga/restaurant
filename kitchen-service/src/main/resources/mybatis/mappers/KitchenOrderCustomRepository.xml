@@ -34,4 +34,9 @@
         kitchen_order_id = #{kitchenOrderId}
     </update>
 
+    <delete id="delete" parameterType="long">
+        DELETE FROM kitchen.kitchen_order
+        WHERE kitchen_order_id = #{kitchenOrderId}
+    </delete>
+
 </mapper>

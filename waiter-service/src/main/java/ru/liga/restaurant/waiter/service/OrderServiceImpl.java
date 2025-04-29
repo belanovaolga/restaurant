@@ -11,11 +11,11 @@ import ru.liga.restaurant.waiter.feign.KitchenFeignClient;
 import ru.liga.restaurant.waiter.kafka.KafkaSender;
 import ru.liga.restaurant.waiter.mapper.OrderPositionsMapper;
 import ru.liga.restaurant.waiter.mapper.WaiterOrderMapper;
-import ru.liga.restaurant.waiter.model.Menu;
-import ru.liga.restaurant.waiter.model.OrderPositions;
-import ru.liga.restaurant.waiter.model.Payment;
-import ru.liga.restaurant.waiter.model.WaiterAccount;
-import ru.liga.restaurant.waiter.model.WaiterOrder;
+import ru.liga.restaurant.waiter.model.entity.Menu;
+import ru.liga.restaurant.waiter.model.entity.OrderPositions;
+import ru.liga.restaurant.waiter.model.entity.Payment;
+import ru.liga.restaurant.waiter.model.entity.WaiterAccount;
+import ru.liga.restaurant.waiter.model.entity.WaiterOrder;
 import ru.liga.restaurant.waiter.model.enums.WaiterStatus;
 import ru.liga.restaurant.waiter.model.request.DishRequest;
 import ru.liga.restaurant.waiter.model.request.OrderRequest;
@@ -33,6 +33,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Реализация сервиса для работы с заказами
+ * Реализует бизнес-логику создания и управления заказами
+ * Взаимодействует с kitchen module через Feign Client и Kafka.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -47,32 +52,60 @@ public class OrderServiceImpl implements OrderService {
     private final KitchenFeignClient kitchenFeignClient;
     private final KafkaSender kafkaSender;
 
+    /**
+     * Получает пагинированный список заказов
+     *
+     * @param pageNumber номер страницы
+     * @param size       количество элементов на странице
+     * @return список заказов с оберткой {@link OrderResponseList}
+     * @throws IllegalArgumentException, если pageNumber или size некорректны
+     */
     @Override
     public OrderResponseList getOrderList(Integer pageNumber, Integer size) {
         log.info("Получение списка заказов. Номер страницы: {}, размер: {}", pageNumber, size);
-        List<WaiterOrder> waiterOrders = waiterOrderRepository.findAll(PageRequest.of(pageNumber - 1, size)).stream().toList();
-        log.debug("Найдено {} заказов", waiterOrders.size());
-        List<OrderResponse> orderResponseList = waiterOrders.stream().map(waiterOrderMapper::toOrderResponse).toList();
+        List<OrderResponse> orderResponseList = waiterOrderRepository.findAll(
+                        PageRequest.of(pageNumber - 1, size)).stream()
+                .map(waiterOrderMapper::toOrderResponse)
+                .toList();
 
         log.info("Возвращен список из {} заказов", orderResponseList.size());
         return OrderResponseList.builder().orderResponsesList(orderResponseList).build();
     }
 
+    /**
+     * Получает детальную информацию о заказе
+     *
+     * @param id идентификатор заказа
+     * @return данные заказа в формате {@link OrderResponse}
+     * @throws NotFoundException если заказ не найден
+     */
     @Override
     public OrderResponse getOrder(Long id) {
         log.info("Получение заказа по ID: {}", id);
-        OrderResponse orderResponse = waiterOrderMapper.toOrderResponse(findById(id));
+        OrderResponse orderResponse = waiterOrderMapper.toOrderResponse(findByOrderNo(id));
         log.debug("Заказ получен: {}", orderResponse);
         return orderResponse;
     }
 
+    /**
+     * Проверяет возможность создания заказа, создает заказ,
+     * отправляет сообщение об этом в Kafka
+     *
+     * @param orderRequest DTO с данными для создания заказа
+     * @return созданный заказ
+     * @throws NotFoundException если:
+     *                           <ul>
+     *                             <li>Официант не найден</li>
+     *                             <li>Блюдо не найдено</li>
+     *                           </ul>
+     */
     @Override
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
         log.info("Создание нового заказа: {}", orderRequest);
 
         log.debug("Проверка возможности создания заказа через KitchenService");
-        kitchenFeignClient.rejectOrder(orderRequest);
+        kitchenFeignClient.checkOrder(orderRequest);
 
         log.debug("Поиск официанта по ID: {}", orderRequest.getWaiterId());
         WaiterAccount waiterAccount = waiterAccountRepository.findById(orderRequest.getWaiterId())
@@ -93,7 +126,8 @@ public class OrderServiceImpl implements OrderService {
         List<OrderPositions> positions = orderRequest.getPositions().stream()
                 .map(orderPositionsRequest -> {
                     log.debug("Обработка позиции: {}", orderPositionsRequest);
-                    OrderPositions orderPositions = orderPositionsMapper.toOrderPositions(orderPositionsRequest, savedOrder);
+                    OrderPositions orderPositions = orderPositionsMapper.toOrderPositions(
+                            orderPositionsRequest, savedOrder);
                     orderPositions.setMenu(findMenuById(orderPositionsRequest.getMenuPositionId()));
                     return orderPositionsRepository.save(orderPositions);
                 })
@@ -126,14 +160,31 @@ public class OrderServiceImpl implements OrderService {
         return waiterOrderMapper.toOrderResponse(finalOrder);
     }
 
+    /**
+     * Получает статус заказа
+     *
+     * @param id идентификатор заказа
+     * @return DTO с текущим статусом
+     * @throws NotFoundException если заказ не найден
+     */
     @Override
     public StatusResponse getStatus(Long id) {
         log.info("Получение статуса заказа по ID: {}", id);
-        WaiterStatus waiterStatus = findById(id).getStatus();
+        WaiterStatus waiterStatus = waiterOrderRepository.findStatusByOrderNo(id)
+                .orElseThrow(() -> {
+                    log.error("Заказ не найден: {}", id);
+                    return NotFoundException.builder().message("Заказ не найден").httpStatus(HttpStatus.NOT_FOUND).build();
+                });
         log.debug("Статус заказа {}: {}", id, waiterStatus);
         return StatusResponse.builder().waiterStatus(waiterStatus).build();
     }
 
+    /**
+     * Изменяет статус заказа на "ГОТОВ"
+     *
+     * @param id идентификатор заказа
+     * @throws NotFoundException если заказ не найден
+     */
     @Override
     @Transactional
     public void orderReady(Long id) {
@@ -142,22 +193,56 @@ public class OrderServiceImpl implements OrderService {
         log.info("Статус заказа {} изменен на \"ГОТОВ\"", id);
     }
 
-    private WaiterOrder findById(Long id) {
+    /**
+     * Изменяет статус заказа на "УДАЛЕН"
+     *
+     * @param id идентификатор заказа
+     * @throws NotFoundException если заказ не найден
+     */
+    @Override
+    @Transactional
+    public void rejectOrder(Long id) {
+        log.info("Изменение статуса заказа на \"УДАЛЕН\" по ID: {}", id);
+        waiterOrderRepository.updateStatus(id, WaiterStatus.DELETED);
+        log.info("Статус заказа {} изменен на \"УДАЛЕН\"", id);
+    }
+
+    /**
+     * Находит заказ по идентификатору
+     * @param id идентификатор заказа
+     * @return найденный заказ
+     * @throws NotFoundException если заказ не существует
+     */
+    private WaiterOrder findByOrderNo(Long id) {
         log.debug("Поиск заказа по ID: {}", id);
-        return waiterOrderRepository.findById(id).orElseThrow(() -> {
+        return waiterOrderRepository.findByOrderNo(id).orElseThrow(() -> {
             log.error("Заказ не найден: {}", id);
             return NotFoundException.builder().message("Заказ не найден").httpStatus(HttpStatus.NOT_FOUND).build();
         });
     }
 
+    /**
+     * Находит блюдо по идентификатору
+     * @param id идентификатор блюда
+     * @return найденное блюдо
+     * @throws NotFoundException если блюдо не существует
+     */
     private Menu findMenuById(Long id) {
         log.debug("Поиск блюда по ID: {}", id);
         return menuRepository.findById(id).orElseThrow(() -> {
             log.error("Блюдо не найдено: {}", id);
-            return NotFoundException.builder().message("Блюдо " + id + " не найдено").httpStatus(HttpStatus.NOT_FOUND).build();
+            return NotFoundException.builder()
+                    .message("Блюдо " + id + " не найдено")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
         });
     }
 
+    /**
+     * Рассчитывает итоговую сумму заказа
+     * @param positions список позиций заказа
+     * @return общая сумма
+     */
     private Double calculateTotalSum(List<OrderPositions> positions) {
         log.debug("Расчет суммы для {} позиций заказа", positions.size());
         return positions.stream()
@@ -166,6 +251,13 @@ public class OrderServiceImpl implements OrderService {
                 .sum();
     }
 
+    /**
+     * Создает и сохраняет платеж заказа
+     * @param order заказ
+     * @param paymentType тип платежа ("CASH", "CARD")
+     * @param sum сумма платежа
+     * @return платеж заказа
+     */
     private Payment createPayment(WaiterOrder order, String paymentType, Double sum) {
         log.debug("Создание платежа для заказа {}. Тип: {}, сумма: {}", order.getOrderNo(), paymentType, sum);
         Payment payment = Payment.builder()

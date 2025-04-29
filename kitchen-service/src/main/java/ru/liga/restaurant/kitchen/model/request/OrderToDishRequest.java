@@ -5,13 +5,18 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * DTO запроса с информацией о заказе и блюдах в нем
+ */
 @Data
 @Schema(description = "Запрос на передачу заказа на кухню")
 public class OrderToDishRequest {
     @Schema(description = "ID заказа на кухне", example = "45")
     private Long kitchenOrderId;
+
     @Schema(description = "Номер заказа у официанта", example = "78")
     private Long waiterOrderNo;
+
     @Schema(description = "Список блюд в заказе")
     private List<DishRequest> dishRequest;
 }

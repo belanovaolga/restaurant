@@ -6,8 +6,8 @@ INSERT INTO waiter.waiter_account (waiter_id, name, employment_date, sex) VALUES
 (5, 'Смирнов Павел', '2023-05-12 09:00:00+03', 'Мужской');
 
 INSERT INTO waiter.menu (id, dish_name, dish_cost) VALUES
-(1, 'Стейк Рибай', 1200.00),
-(2, 'Салат Цезарь', 450.00),
+(1, 'Стейк', 1200.00),
+(2, 'Цезарь', 450.00),
 (3, 'Томатный суп', 350.00),
 (4, 'Паста Карбонара', 680.00),
 (5, 'Тирамису', 420.00),

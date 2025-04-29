@@ -13,4 +13,9 @@
         </rollback>
     </changeSet>
 
+    <changeSet id="2024-03-30 20:21:00" author="olya">
+        <sqlFile path="sql/data_test.sql"
+                 relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>

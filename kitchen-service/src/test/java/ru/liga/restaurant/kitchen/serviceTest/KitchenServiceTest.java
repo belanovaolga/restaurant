@@ -8,7 +8,9 @@ import ru.liga.restaurant.kitchen.custom.repository.KitchenOrderCustomRepository
 import ru.liga.restaurant.kitchen.custom.repository.OrderToDishCustomRepository;
 import ru.liga.restaurant.kitchen.exception.InsufficientStockException;
 import ru.liga.restaurant.kitchen.exception.NotFoundException;
+import ru.liga.restaurant.kitchen.exception.OrderCannotBeDeletedException;
 import ru.liga.restaurant.kitchen.feign.WaiterFeignClient;
+import ru.liga.restaurant.kitchen.grpc.GrpcService;
 import ru.liga.restaurant.kitchen.mapper.DishMapper;
 import ru.liga.restaurant.kitchen.mapper.DishMapperImpl;
 import ru.liga.restaurant.kitchen.mapper.KitchenOrderMapper;
@@ -35,6 +37,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 class KitchenServiceTest {
     private final DishCustomRepository dishCustomRepository;
@@ -44,6 +47,7 @@ class KitchenServiceTest {
     private final KitchenOrderMapper kitchenOrderMapper;
     private final OrderToDishMapper orderToDishMapper;
     private final WaiterFeignClient waiterFeignClient;
+    private final GrpcService grpcService;
     private final KitchenService kitchenService;
     private final EasyRandom generator;
 
@@ -55,8 +59,9 @@ class KitchenServiceTest {
         kitchenOrderMapper = new KitchenOrderMapperImpl();
         orderToDishMapper = new OrderToDishMapperImpl();
         waiterFeignClient = Mockito.mock(WaiterFeignClient.class);
+        grpcService = Mockito.mock(GrpcService.class);
         kitchenService = new KitchenServiceImpl(dishCustomRepository, kitchenOrderCustomRepository, orderToDishCustomRepository,
-                dishMapper, kitchenOrderMapper, orderToDishMapper, waiterFeignClient);
+                dishMapper, kitchenOrderMapper, orderToDishMapper, waiterFeignClient, grpcService);
         generator = new EasyRandom();
     }
 
@@ -138,7 +143,78 @@ class KitchenServiceTest {
     }
 
     @Test
-    void shouldRejectOrder() {
+    void shouldRejectOrder_whenStatusAtWork() {
+        KitchenOrder kitchenOrder = generator.nextObject(KitchenOrder.class);
+        kitchenOrder.setStatus(KitchenStatus.AT_WORK);
+        OrderToDish orderToDish1 = generator.nextObject(OrderToDish.class);
+        orderToDish1.setKitchenOrder(kitchenOrder);
+        OrderToDish orderToDish2 = generator.nextObject(OrderToDish.class);
+        orderToDish2.setKitchenOrder(kitchenOrder);
+        OrderToDish orderToDish3 = generator.nextObject(OrderToDish.class);
+        orderToDish3.setKitchenOrder(kitchenOrder);
+        List<OrderToDish> orderToDishList = List.of(orderToDish1, orderToDish2, orderToDish3);
+
+        Mockito.when(kitchenOrderCustomRepository.findById(kitchenOrder.getKitchenOrderId()))
+                .thenReturn(Optional.of(kitchenOrder));
+        Mockito.when(orderToDishCustomRepository.findByKitchenOrderId(kitchenOrder.getKitchenOrderId()))
+                .thenReturn(orderToDishList);
+        Mockito.doNothing().when(dishCustomRepository).update(any(Dish.class));
+        Mockito.doNothing().when(kitchenOrderCustomRepository).delete(kitchenOrder);
+        Mockito.doNothing().when(grpcService).rejectOrder(kitchenOrder.getKitchenOrderId());
+
+        assertDoesNotThrow(() -> kitchenService.rejectOrder(kitchenOrder.getKitchenOrderId()));
+    }
+
+    @Test
+    void shouldRejectOrder_whenStatusAwaiting() {
+        KitchenOrder kitchenOrder = generator.nextObject(KitchenOrder.class);
+        kitchenOrder.setStatus(KitchenStatus.AWAITING);
+        OrderToDish orderToDish1 = generator.nextObject(OrderToDish.class);
+        orderToDish1.setKitchenOrder(kitchenOrder);
+        OrderToDish orderToDish2 = generator.nextObject(OrderToDish.class);
+        orderToDish2.setKitchenOrder(kitchenOrder);
+        OrderToDish orderToDish3 = generator.nextObject(OrderToDish.class);
+        orderToDish3.setKitchenOrder(kitchenOrder);
+        List<OrderToDish> orderToDishList = List.of(orderToDish1, orderToDish2, orderToDish3);
+
+        Mockito.when(kitchenOrderCustomRepository.findById(kitchenOrder.getKitchenOrderId()))
+                .thenReturn(Optional.of(kitchenOrder));
+        Mockito.when(orderToDishCustomRepository.findByKitchenOrderId(kitchenOrder.getKitchenOrderId()))
+                .thenReturn(orderToDishList);
+        Mockito.doNothing().when(dishCustomRepository).update(any(Dish.class));
+        Mockito.doNothing().when(kitchenOrderCustomRepository).delete(kitchenOrder);
+        Mockito.doNothing().when(grpcService).rejectOrder(kitchenOrder.getKitchenOrderId());
+
+        assertDoesNotThrow(() -> kitchenService.rejectOrder(kitchenOrder.getKitchenOrderId()));
+    }
+
+    @Test
+    void shouldRejectOrder_whenOrderCannotBeDeleted() {
+        KitchenOrder kitchenOrder = generator.nextObject(KitchenOrder.class);
+        kitchenOrder.setStatus(KitchenStatus.READY);
+
+        Mockito.when(kitchenOrderCustomRepository.findById(kitchenOrder.getKitchenOrderId()))
+                .thenReturn(Optional.of(kitchenOrder));
+
+        assertThrows(OrderCannotBeDeletedException.class, () -> {
+            kitchenService.rejectOrder(kitchenOrder.getKitchenOrderId());
+        });
+    }
+
+    @Test
+    void shouldRejectOrder_whenOrderNotFound() {
+        KitchenOrder kitchenOrder = generator.nextObject(KitchenOrder.class);
+
+        Mockito.when(kitchenOrderCustomRepository.findById(kitchenOrder.getKitchenOrderId()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> {
+            kitchenService.rejectOrder(kitchenOrder.getKitchenOrderId());
+        });
+    }
+
+    @Test
+    void shouldCheckOrder() {
         OrderRequest orderRequest = generator.nextObject(OrderRequest.class);
         orderRequest.getPositions().forEach(orderPositionsRequest -> {
             Dish dish = Dish.builder()
@@ -153,11 +229,11 @@ class KitchenServiceTest {
                     .thenReturn(Optional.of(dish));
         });
 
-        assertDoesNotThrow(() -> kitchenService.rejectOrder(orderRequest));
+        assertDoesNotThrow(() -> kitchenService.checkOrder(orderRequest));
     }
 
     @Test
-    void shouldRejectOrder_whenInsufficientStock() {
+    void shouldCheckOrder_whenInsufficientStock() {
         OrderRequest orderRequest = generator.nextObject(OrderRequest.class);
         orderRequest.getPositions().forEach(orderPositionsRequest -> {
             Dish dish = Dish.builder()
@@ -172,18 +248,18 @@ class KitchenServiceTest {
                     .thenReturn(Optional.of(dish));
         });
 
-        assertThrows(InsufficientStockException.class, () -> kitchenService.rejectOrder(orderRequest));
+        assertThrows(InsufficientStockException.class, () -> kitchenService.checkOrder(orderRequest));
     }
 
     @Test
-    void shouldRejectOrder_whenDishNotFound() {
+    void shouldCheckOrder_whenDishNotFound() {
         OrderRequest orderRequest = generator.nextObject(OrderRequest.class);
         orderRequest.getPositions().forEach(orderPositionsRequest -> {
             Mockito.when(dishCustomRepository.findById(orderPositionsRequest.getMenuPositionId())).thenReturn(Optional.empty());
         });
 
         assertThrows(NotFoundException.class, () -> {
-            kitchenService.rejectOrder(orderRequest);
+            kitchenService.checkOrder(orderRequest);
         });
     }
 

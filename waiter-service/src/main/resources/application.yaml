@@ -31,3 +31,7 @@ springdoc:
 service:
   host:
     kitchen: localhost:8080/kitchen
+
+grpc:
+  server:
+    port: 9022

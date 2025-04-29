@@ -22,6 +22,10 @@ import ru.liga.restaurant.waiter.model.response.OrderResponseList;
 import ru.liga.restaurant.waiter.model.response.StatusResponse;
 import ru.liga.restaurant.waiter.service.OrderService;
 
+/**
+ * Контроллер для управления заказами официантами
+ * Обеспечивает API для создания, получения, изменения статуса заказов
+ */
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
@@ -30,6 +34,13 @@ import ru.liga.restaurant.waiter.service.OrderService;
 public class OrderController {
     private final OrderService orderService;
 
+    /**
+     * Возвращает пагинированный список всех заказов
+     *
+     * @param pageNumber номер страницы
+     * @param size       количество элементов на странице
+     * @return список заказов с пагинацией
+     */
     @Operation(
             summary = "Получить список заказов",
             description = "Возвращает пагинированный список всех заказов",
@@ -46,6 +57,12 @@ public class OrderController {
         return orderResponseList;
     }
 
+    /**
+     * Возвращает заказ по идентификатору
+     *
+     * @param id идентификатор заказа
+     * @return ответ с заказом по идентификатору
+     */
     @Operation(
             summary = "Получить заказ по ID",
             description = "Возвращает информацию о конкретном заказе",
@@ -63,6 +80,12 @@ public class OrderController {
         return orderResponse;
     }
 
+    /**
+     * Создает новый заказ
+     *
+     * @param orderRequest запрос с данными заказа
+     * @return ответ с созданным заказом
+     */
     @Operation(
             summary = "Создать новый заказ",
             description = "Создает новый заказ на основе входных данных",
@@ -82,6 +105,12 @@ public class OrderController {
         return orderResponse;
     }
 
+    /**
+     * Возвращает статус заказа по идентификатору
+     *
+     * @param id идентификатор заказа
+     * @return ответ со статусом заказа
+     */
     @Operation(
             summary = "Получить статус заказа",
             description = "Возвращает текущий статус заказа по его ID",
@@ -99,6 +128,11 @@ public class OrderController {
         return statusResponse;
     }
 
+    /**
+     * Изменяет статус заказа на "ГОТОВ"
+     *
+     * @param id идентификатор заказа
+     */
     @Operation(
             summary = "Изменить статус заказа на \"ГОТОВ\"",
             description = "Обновляет статус заказа на \"ГОТОВ\"",
@@ -113,5 +147,26 @@ public class OrderController {
         log.info("Начало изменения статуса заказа {} на \"ГОТОВ\"", id);
         orderService.orderReady(id);
         log.info("Статус заказа {} обновлен на \"ГОТОВ\"", id);
+    }
+
+    /**
+     * Изменяет статус заказа на "УДАЛЕН"
+     *
+     * @param id идентификатор заказа
+     */
+    @Operation(
+            summary = "Изменить статус заказа на \"УДАЛЕН\"",
+            description = "Обновляет статус заказа на \"УДАЛЕН\"",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Статус успешно помечен как удаленный"),
+                    @ApiResponse(responseCode = "404", description = "Заказ не найден",
+                            content = @Content(schema = @Schema(implementation = NotFoundException.class)))
+            }
+    )
+    @PostMapping("/{id}/reject")
+    void rejectOrder(@PathVariable Long id) {
+        log.info("Начало изменения статуса заказа {} на \"УДАЛЕН\"", id);
+        orderService.rejectOrder(id);
+        log.info("Статус заказа {} обновлен на \"УДАЛЕН\"", id);
     }
 }

@@ -37,7 +37,7 @@ class KitchenControllerTest {
 
     @Test
     @SneakyThrows
-    void shouldRejectOrder() {
+    void shouldCheckOrder() {
         OrderRequest orderRequest = generator.nextObject(OrderRequest.class);
 
         orderRequest.getPositions().forEach(orderPositionsRequest -> {
@@ -53,7 +53,7 @@ class KitchenControllerTest {
                     .thenReturn(Optional.of(dish));
         });
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/kitchen/reject")
+        mockMvc.perform(MockMvcRequestBuilders.post("/kitchen/check")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderRequest)))
@@ -62,7 +62,7 @@ class KitchenControllerTest {
 
     @Test
     @SneakyThrows
-    void shouldRejectOrder_whenInsufficientStock() {
+    void shouldCheckOrder_whenInsufficientStock() {
         OrderRequest orderRequest = generator.nextObject(OrderRequest.class);
 
         orderRequest.getPositions().forEach(orderPositionsRequest -> {
@@ -78,7 +78,7 @@ class KitchenControllerTest {
                     .thenReturn(Optional.of(dish));
         });
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/kitchen/reject")
+        mockMvc.perform(MockMvcRequestBuilders.post("/kitchen/check")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderRequest)))

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package proto;
+
+message OrderIdProtoBuf {
+  int64 order_id = 1;
+}
+
+message VoidResponse {
+  bool success = 1;
+  string error_message = 2;
+  uint32 http_status = 3;
+}
+
+service OrderService {
+  rpc rejectOrder(OrderIdProtoBuf) returns (VoidResponse) {};
+}

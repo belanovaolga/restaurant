@@ -1,3 +1,3 @@
-DROP TABLE IF EXISTS kitchen_order;
+drop table IF EXISTS kitchen.kitchen_order;
 
-DROP SEQUENCE IF EXISTS kitchen_order_seq;
+drop sequence IF EXISTS kitchen_order_seq;

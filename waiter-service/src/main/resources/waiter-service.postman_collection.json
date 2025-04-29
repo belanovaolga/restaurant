@@ -1,0 +1,93 @@
+{
+  "info": {
+    "_postman_id": "e8fc03ba-daf9-4a80-9ab9-45ea6d023c6f",
+    "name": "waiter-service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "32679736"
+  },
+  "item": [
+    {
+      "name": "get-order-list",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8070/order?pageNumber=2&size=1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8070",
+          "path": [
+            "order"
+          ],
+          "query": [
+            {
+              "key": "pageNumber",
+              "value": "2"
+            },
+            {
+              "key": "size",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get-order",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8070/order/6"
+      },
+      "response": []
+    },
+    {
+      "name": "create-order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"waiterId\" : 1,\r\n    \"tableNo\" : \"first\",\r\n    \"paymentType\" : \"cash\",\r\n    \"positions\" : [\r\n        {\r\n            \"dishNum\" : 1,\r\n            \"menuPositionId\" : 5\r\n        },\r\n        {\r\n            \"dishNum\" : 1,\r\n            \"menuPositionId\" : 9\r\n        }\r\n\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "http://localhost:8070/order"
+      },
+      "response": []
+    },
+    {
+      "name": "get-status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8070/order/status/6"
+      },
+      "response": []
+    },
+    {
+      "name": "order-ready",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "http://localhost:8070/order/6"
+      },
+      "response": []
+    },
+    {
+      "name": "reject-order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "http://localhost:8070/order/6/reject"
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,3 +1,3 @@
-DROP TABLE IF EXISTS dish_table;
+drop table IF EXISTS kitchen.dish_table;
 
-DROP SEQUENCE IF EXISTS dish_seq;
+drop sequence IF EXISTS dish_seq;

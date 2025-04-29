@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * DTO запроса с информацией о заказе и блюдах в нем
+ */
 @Data
 @Builder
 public class OrderToDishRequest {

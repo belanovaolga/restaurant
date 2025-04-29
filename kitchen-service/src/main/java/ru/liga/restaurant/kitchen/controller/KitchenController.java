@@ -16,12 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.liga.restaurant.kitchen.exception.InsufficientStockException;
 import ru.liga.restaurant.kitchen.exception.NotFoundException;
+import ru.liga.restaurant.kitchen.exception.OrderCannotBeDeletedException;
 import ru.liga.restaurant.kitchen.model.request.OrderRequest;
 import ru.liga.restaurant.kitchen.model.request.OrderToDishRequest;
 import ru.liga.restaurant.kitchen.model.response.OrderToDishListResponse;
 import ru.liga.restaurant.kitchen.model.response.OrderToDishResponse;
 import ru.liga.restaurant.kitchen.service.KitchenService;
 
+/**
+ * Контроллер для управления заказами на кухне
+ * Обеспечивает API для приема, отклонения, проверки заказов и управления их статусами
+ */
 @RestController
 @RequestMapping("/kitchen")
 @RequiredArgsConstructor
@@ -30,6 +35,12 @@ import ru.liga.restaurant.kitchen.service.KitchenService;
 public class KitchenController {
     private final KitchenService kitchenService;
 
+    /**
+     * Принимает заказ на кухню
+     *
+     * @param orderToDishRequest запрос с данными заказа
+     * @return ответ с принятым заказом
+     */
     @Operation(
             summary = "Принять заказ на кухню",
             description = "Принимает заказ от клиента для приготовления",
@@ -47,8 +58,36 @@ public class KitchenController {
         return orderToDishResponse;
     }
 
+    /**
+     * Отклоняет (удаляет) заказ
+     *
+     * @param id идентификатор заказа
+     */
     @Operation(
             summary = "Отклонить заказ",
+            description = "Удаляет созданный ранее заказ",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Заказ успешно отклонен"),
+                    @ApiResponse(responseCode = "404", description = "Заказ не найден",
+                            content = @Content(schema = @Schema(implementation = NotFoundException.class))),
+                    @ApiResponse(responseCode = "409", description = "Невозможно отклонить заказ",
+                            content = @Content(schema = @Schema(implementation = OrderCannotBeDeletedException.class)))
+            }
+    )
+    @PostMapping("/reject/{id}")
+    public void rejectOrder(@PathVariable Long id) {
+        log.info("Удаление ранее созданного заказа по ID: {}", id);
+        kitchenService.rejectOrder(id);
+        log.debug("Заказ {} отклонен (удален)", id);
+    }
+
+    /**
+     * Проверяет возможность создания заказа
+     *
+     * @param orderRequest запрос с данными заказа
+     */
+    @Operation(
+            summary = "Проверка возможности создания заказа",
             description = "Проверяет возможность создания заказа",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Заказ успешно отклонен"),
@@ -58,13 +97,18 @@ public class KitchenController {
                             content = @Content(schema = @Schema(implementation = InsufficientStockException.class)))
             }
     )
-    @PostMapping("/reject")
-    public void rejectOrder(@RequestBody OrderRequest orderRequest) {
+    @PostMapping("/check")
+    public void checkOrder(@RequestBody OrderRequest orderRequest) {
         log.info("Проверка на возможность создания заказа: {}", orderRequest);
-        kitchenService.rejectOrder(orderRequest);
+        kitchenService.checkOrder(orderRequest);
         log.debug("Создание заказа {} возможно", orderRequest);
     }
 
+    /**
+     * Обновляет статус заказа на "ГОТОВ"
+     *
+     * @param id идентификатор заказа
+     */
     @Operation(
             summary = "Изменить статус заказа на \"ГОТОВ\"",
             description = "Обновляет статус заказа на \"ГОТОВ\"",
@@ -81,6 +125,13 @@ public class KitchenController {
         log.debug("Статус заказа {} обновлен на \"ГОТОВ\"", id);
     }
 
+    /**
+     * Возвращает пагинированный список заказов кухни
+     *
+     * @param pageNumber номер страницы
+     * @param size       количество элементов на странице
+     * @return список заказов с пагинацией
+     */
     @Operation(
             summary = "Получить список заказов кухни",
             description = "Возвращает пагинированный список заказов",

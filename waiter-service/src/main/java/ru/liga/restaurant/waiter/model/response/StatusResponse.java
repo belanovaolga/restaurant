@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import ru.liga.restaurant.waiter.model.enums.WaiterStatus;
 
+/**
+ * DTO ответа с информацией о статусе заказа
+ */
 @Data
 @Builder
 @Schema(description = "Информация о статусе заказа")
